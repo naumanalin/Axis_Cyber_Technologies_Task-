@@ -11,7 +11,8 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 import { connectDB } from './models/connection.js';
 connectDB()
 
-import userRoutes from './routes/user.js'
+import userRoutes from './routes/user.js';
+import transactionRoutes from './routes/transaction.js'
 
 const app = express()
 
@@ -32,10 +33,13 @@ app.get('/test', (req, res)=>{
 })
 
 // All Routes
-app.use('/api/user', userRoutes)
-
+app.use('/api/user', userRoutes);
+app.use('/api/transactions', transactionRoutes)
 
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port: ${PORT}`);
 });
+
+// Export app for Vercel
+export default app;

@@ -10,6 +10,34 @@ This backend provides API endpoints for managing:
 
 - 💰 Transactions
 
+## Transaction RESTFUL API's | End Points
+
+| No. | Title                   | Method | Route |
+|----|--------------------------|--------|--------------------------------------------|
+| 1  | Get all transactions     | GET    | `/api/transactions`                        |
+| 2  | Add new                  | POST   | `/api/transactions`                        |
+| 3  | Delete                   | DELETE | `/api/transactions/:id`                    |
+| 4  | Get one                  | GET    | `/api/transactions/:id`                    |
+| 5  | Update                   | PUT    | `/api/transactions/transaction/update/:id` |
+| 6  | Total income             | GET    | `/api/transactions/total/income`           |
+| 7  | Total expense            | GET    | `/api/transactions/total/expense`          |
+| 8  | Selected month income    | GET    |  comming soon ...    
+| 9  | Selected month expense   | GET    |  comming soon ...
+
+---
+
+## User/Auth End Points
+
+| No. | Title                   | Method | Route |
+|----|--------------------------|--------|--------------------------------|
+| 1  | Signup                  | POST   | `/api/user/signup`            |
+| 2  | Login                   | POST   | `/api/user/login`             |
+| 3  | Verification request    | GET    | `/api/user/verify/req`        |
+| 4  | Verify account          | POST   | `/api/user/verify/account`    |
+| 5  | Recover/Forgot password | comming | soon ...
+
+
+
 ## 🧑‍💻 Users API
 ### 🔹 User Signup
 

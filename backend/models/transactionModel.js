@@ -25,7 +25,11 @@ const transactionSchema = new mongoose.Schema({
     enum: ["income", "expense"],
     required: [true, "Transaction type must be either 'income' or 'expense'."],
   },
-  date: {
+  date:{
+    type: Date,
+    required: true,
+  },
+  createdDate: {
     type: Date,
     default: Date.now,
   },

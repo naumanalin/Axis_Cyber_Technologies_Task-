@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import User from '../models/userModel.js'
+import sendEmail from '../utils/send_Email.js';
 
 // ------------------------------------------------------------------------------------------------------------------------
 export const signup = async (req, res) => {
@@ -22,13 +23,12 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
 
-        const email_verification_code = Math.floor(1000 + Math.random() * 9000).toString();
+        
 
         const newUser = new User({
             name,
             email,
             password: hashPassword,
-            email_verification_code,
         });
         await newUser.save();
 
@@ -49,7 +49,8 @@ export const signup = async (req, res) => {
 // ------------------------------------------------------------------------------------------------------------------------
 export const login = async (req, res) =>{
     try {
-        const { email, password } = req.body;
+        const { email, password, rememberMe  } = req.body;
+        const d = rememberMe ? 30 : 7;
         if(!email || !password ){
             return res.status(400).json({success:false, message:"email or password is empty"});
         }
@@ -64,11 +65,11 @@ export const login = async (req, res) =>{
             return res.status(401).json({ success: false, message: "Invalid password" });
         }
 
-        const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `${d}d` });
         
         res.status(200).cookie('a_x_is', token, {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000, 
+            maxAge: d * 24 * 60 * 60 * 1000, 
             path: '/',
             sameSite: "strict",
         }).json({ success: true, message: "Login successful", token });
@@ -80,9 +81,61 @@ export const login = async (req, res) =>{
 
 // ------------------------------------------------------------------------------------------------------------------------
 export const verifyAccountReq = async (req, res)=>{
+    try {
+        const user = req.user;
+
+        if (user.verified) {
+            return res.status(400).json({ success: false, message: "Account is already verified." });
+        }
+
+        const email_verification_code = Math.floor(1000 + Math.random() * 9000).toString();
+        
+        // Save verification code to user
+        user.email_verification_code = email_verification_code;
+        await user.save();
+
+        // Send email
+        const send_email = await sendEmail(user.name, user.email, email_verification_code);
+        if (!send_email) {
+            return res.status(500).json({ success: false, message: "Failed to send verification email." });
+        }
+
+        res.status(200).json({ success: true, message: "Verification email sent successfully." });
+
+    } catch (error) {
+        console.error("Error in verifyAccountReq:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
 }
 // -------------------------------------------------------------------------------------------------------------------------
 export const verifyAccount = async (req, res)=>{ 
+    try {
+        const user = req.user;
+        const {email, verification_code} = req.body;
+        if(!email || !verification_code){
+            return res.status(400).json({success:false, message:"Email or Verification code did not fount?"});
+        };
+
+        if(email !== user.email){
+            return res.status(400).json({success:false, message:"Email did not match?"});
+        }
+
+        if(user.verified){
+            return res.status(400).json({success:false, message:"Dear user your account is already verified!"})
+        }
+
+        if(user.email_verification_code != verification_code){
+            return res.status(400).json({ success: false, message: "Invalid verification code." });
+        }
+
+        user.verified = true;
+        user.email_verification_code = null;
+        await user.save();
+
+        res.status(200).json({success:true, message:'🎉 Account Verified Successfully.'})
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
 
 }
 // ------------------------------------------------------------------------------------------------------------------------
