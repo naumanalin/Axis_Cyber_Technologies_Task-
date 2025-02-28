@@ -34,7 +34,7 @@ export const signup = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: "🎉 Successfully registered! Please check your email for verification."
+            message: "🎉 Your account successfully registered!"
         });
 
     } catch (error) {
@@ -47,17 +47,18 @@ export const signup = async (req, res) => {
 };
 
 // ------------------------------------------------------------------------------------------------------------------------
-export const login = async (req, res) =>{
+export const login = async (req, res) => {
     try {
-        const { email, password, rememberMe  } = req.body;
+        const { email, password, rememberMe } = req.body;
         const d = rememberMe ? 30 : 7;
-        if(!email || !password ){
-            return res.status(400).json({success:false, message:"email or password is empty"});
+
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: "Email or password is empty" });
         }
 
-        const user = await User.findOne({email}).select('-password')
-        if(!user){
-            return res.status(404).json({success:false, message:"Email is not Registered"})
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Email is not registered" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -66,18 +67,23 @@ export const login = async (req, res) =>{
         }
 
         const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `${d}d` });
-        
-        res.status(200).cookie('a_x_is', token, {
+
+        res.cookie('a_x_is', token, {
             httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
             maxAge: d * 24 * 60 * 60 * 1000, 
             path: '/',
-            sameSite: "strict",
-        }).json({ success: true, message: "Login successful", token, user });
+            sameSite: "lax",
+        });
+
+        res.status(200).json({ success: true, message: "Login successful", token, user });
 
     } catch (error) {
-        res.status(500).json({success:false, message:"internal server error"})
+        console.error("Login Error:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
-}
+};
+
 
 // ------------------------------------------------------------------------------------------------------------------------
 export const verifyAccountReq = async (req, res)=>{
