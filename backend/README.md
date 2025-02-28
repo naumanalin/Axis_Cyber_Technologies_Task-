@@ -34,8 +34,9 @@ This backend provides API endpoints for managing:
 | 2  | Login                   | POST   | `/api/user/login`             |
 | 3  | Verification request    | GET    | `/api/user/verify/req`        |
 | 4  | Verify account          | POST   | `/api/user/verify/account`    |
-| 5  | Recover/Forgot password | comming | soon ...
-
+| 5  | Loged User Data         | GET    | `/api/user`                   | 
+| 6  | Logout                  | GET    | `/api/user/logout`            |
+| 7  | Recover/Forgot password | comming | soon ...                     |
 
 
 ## 🧑‍💻 Users API
