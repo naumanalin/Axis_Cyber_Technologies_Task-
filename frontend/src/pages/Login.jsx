@@ -8,29 +8,30 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate()
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const { data, error } = await useFetch('POST', '/login', { email, password, rememberMe });
-      
-      if (data?.success) {
-        localStorage.setItem('client_a_x_i_s_680', data.token);
-        localStorage.setItem('user', user )
-        toast.success('Login successful!');
-        navigate('/dashboard')
-      } else {
-        toast.error(data?.message || 'Login failed');
-      }
-    } catch (error) {
-      toast.error('An error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const navigate = useNavigate();
+
+  const { fetchData, error, isLoading } = useFetch();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const responseData = await fetchData('POST', '/api/user/login', { 
+                email, 
+                password,
+                rememberMe 
+            });
+
+            if (responseData.success) {
+                localStorage.setItem('client_a_x_i_s_680', responseData.token);
+                localStorage.setItem('user', JSON.stringify(responseData.user));
+                toast.success('Login successful!');
+                navigate('/dashboard');
+            }
+        } catch (error) {
+            toast.error(error.message || 'An error occurred. Please try again.');
+        }
+    };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -42,6 +43,7 @@ const Login = () => {
             <input 
               type="email" 
               id='email'
+              name='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
@@ -69,7 +71,7 @@ const Login = () => {
           </div>
           <div className="flex justify-between items-center mb-4">
             <label className="inline-flex items-center">
-              <input type="checkbox" className="form-checkbox" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
+              <input type="checkbox" className="form-checkbox" name='rememberMe' checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
               <span className="ml-2 text-gray-700">Remember me</span>
             </label>
             <Link to="/forgot-password" className="text-blue-600 hover:underline">Forgot Password?</Link>

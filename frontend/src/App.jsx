@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
 import Navbar from './components/Navbar'
 import HomeRoute from './pages/HomeRoute'
 import Login from './pages/Login'
@@ -36,6 +37,7 @@ const App = () => {
     </Routes>
     </div>
     <Footer />
+    <ToastContainer />
     </>
   )
 }

@@ -1,40 +1,53 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+// hooks/useFetch.js
+import { useState, useCallback } from 'react';
 
-const useFetch = (method = 'GET', route, body = null, options = {}) => {
+const useFetch = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const base_url = 'https://budgettrackerbackend.vercel.app';
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            setError(null);
+    const fetchData = useCallback(async (method, route, body = null, options = {}) => {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+            const url = `${base_url}${route}`;
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers,
+            };
 
-            try {
-                const response = await axios({
-                    method,
-                    url: `${base_url}${route}`,
-                    data: body,
-                    withCredentials: true,
-                    ...options,
-                });
-                setData(response.data);
-            } catch (error) {
-                setError(error);
-            } finally {
-                setIsLoading(false);
+            const config = {
+                method,
+                headers,
+                credentials: 'include', // Equivalent to withCredentials: true
+                ...options,
+            };
+
+            if (body) {
+                config.body = JSON.stringify(body);
             }
-        };
 
-        fetchData();
-    }, [method, route, JSON.stringify(body), JSON.stringify(options)]);
+            const response = await fetch(url, config);
 
-    return { data, error, isLoading };
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Request failed');
+            }
+
+            const responseData = await response.json();
+            setData(responseData);
+            return responseData;
+        } catch (error) {
+            setError(error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    return { data, error, isLoading, fetchData };
 };
 
 export default useFetch;
-
-
-// const { data, error, isLoading } = useFetch('POST', '/login', { email, password }, { headers: { Authorization: 'Bearer token' } });
