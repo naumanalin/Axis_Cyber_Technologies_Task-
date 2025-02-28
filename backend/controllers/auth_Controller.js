@@ -55,7 +55,7 @@ export const login = async (req, res) =>{
             return res.status(400).json({success:false, message:"email or password is empty"});
         }
 
-        const user = await User.findOne({email})
+        const user = await User.findOne({email}).select('-password')
         if(!user){
             return res.status(404).json({success:false, message:"Email is not Registered"})
         }
@@ -72,7 +72,7 @@ export const login = async (req, res) =>{
             maxAge: d * 24 * 60 * 60 * 1000, 
             path: '/',
             sameSite: "strict",
-        }).json({ success: true, message: "Login successful", token });
+        }).json({ success: true, message: "Login successful", token, user });
 
     } catch (error) {
         res.status(500).json({success:false, message:"internal server error"})
