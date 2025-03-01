@@ -114,13 +114,9 @@ export const total_income = async (req, res) => {
 
         const income = all_income_transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-        if(income == 0 || !income){
-            income = 0
-        }
-
         res.status(200).json({ success: true, message: `${user.name} has a total income of $${income}.`, income });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Internal server error!" });
+        return res.status(500).json({ success: false, message: "Internal server error!", error });
     }
 };
 // -------------------------------------------------------------------------------------------------------------------------
@@ -133,7 +129,7 @@ export const total_expense = async (req, res) => {
 
         res.status(200).json({ success: true, message: `${user.name} has a total expense of $${expense}.`, expense });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Internal server error!" });
+        return res.status(500).json({ success: false, message: "Internal server error!", error });
     }
 };
 // -------------------------------------------------------------------------------------------------------------------------
