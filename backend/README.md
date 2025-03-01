@@ -21,7 +21,7 @@ This backend provides API endpoints for managing:
 | 5  | Update                   | PUT    | `/api/transactions/transaction/update/:id` |
 | 6  | Total income             | GET    | `/api/transactions/total/income`           |
 | 7  | Total expense            | GET    | `/api/transactions/total/expense`          |
-| 8  | current month income     | GET    |  `/api/transactions/totoal/income/of-current-month`         |
+| 8  | current month income     | GET    |  `/api/transactions/total/income/of-current-month`         |
 | 9  | current month expense    | GET    |  `/api/transactions/totoal/expense/of-current-month`         |
 
 ---

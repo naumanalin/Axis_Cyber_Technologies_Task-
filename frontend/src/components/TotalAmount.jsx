@@ -1,7 +1,7 @@
 import useFetch from '../hooks/useFetch';
 
-const TotalAmount = ({ type, color }) => {
-    const route = `/api/transactions/total/${type}`;
+const TotalAmount = ({ type, color, of }) => {
+    const route = of ? `/api/transactions/total/${type}/${of}` :`/api/transactions/total/${type}`;
     const { data, error, isLoading } = useFetch("GET", route);
 
     const amount = data?.income ?? 0; 

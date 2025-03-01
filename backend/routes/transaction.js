@@ -13,7 +13,7 @@ router.get('/:id', isLogedin, get_transaction_by_id)
 router.put('/transaction/update/:id', isLogedin, update_transcation)
 router.get('/total/income', isLogedin, total_income)
 router.get('/total/expense', isLogedin, total_expense)
-router.get('/totoal/income/of-current-month', isLogedin, total_income_of_current_month )
+router.get('/total/income/of-current-month', isLogedin, total_income_of_current_month )
 router.get('/total/expense/of-current-month', isLogedin, total_expense_of_current_month)
 
 export default router;

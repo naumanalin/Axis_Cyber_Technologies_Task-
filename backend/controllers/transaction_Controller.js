@@ -162,6 +162,7 @@ export const total_income_of_current_month = async (req, res) => {
             success: true, 
             message: `${user.name} has a total income of $${totalIncome} in ${month} from day ${firstDay.getDate()} to ${lastDay.getDate()}.`,
             income: totalIncome,
+            month: `${month} ${year}`,
             date: `${firstDay.getDate()} to ${lastDay.getDate()} ${month} - ${year}`
         });
     } catch (error) {
@@ -188,6 +189,7 @@ export const total_expense_of_current_month = async (req, res) => {
             success: true, 
             message: `${user.name} has a total expense of $${totalExpense} in ${month} from day ${firstDay.getDate()} to ${lastDay.getDate()}.`,
             expense: totalExpense,
+            month: `${month} ${year}`,
             date: `${firstDay.getDate()} to ${lastDay.getDate()} ${month} - ${year}`
         });
     } catch (error) {
