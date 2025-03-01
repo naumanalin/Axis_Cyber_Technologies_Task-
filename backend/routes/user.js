@@ -8,7 +8,7 @@ router.post('/signup', signup );
 router.post('/login', login);
 router.post('/forgetpassword', forgetPassword)
 
-router.get('/logout', isLogedin, logout )
+router.get('/logout', logout )
 router.get('/', isLogedin, user)
 router.post('/verify/req', isLogedin, verifyAccountReq)
 router.post('/verify/account', isLogedin, verifyAccount)

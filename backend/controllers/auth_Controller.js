@@ -66,16 +66,19 @@ export const login = async (req, res) => {
             return res.status(401).json({ success: false, message: "Invalid password" });
         }
 
+        // Generate JWT token
         const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `${d}d` });
 
+        // Set cookie properly
         res.cookie('a_x_is', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
             maxAge: d * 24 * 60 * 60 * 1000, 
             path: '/',
             sameSite: "lax",
         });
 
+        // Send token in response (optional for frontend)
         res.status(200).json({ success: true, message: "Login successful", token, user });
 
     } catch (error) {
@@ -83,12 +86,13 @@ export const login = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
 // ------------------------------------------------------------------------------------------------------------------------
 export const logout = async (req, res) => {
     try {
         res.cookie('a_x_is', '', {
-            httpOnly: true,
-            secure: true,
+            // httpOnly: true,
+            secure: false,
             expires: new Date(0),
             path: '/',
             sameSite: "lax",
