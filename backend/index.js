@@ -21,8 +21,8 @@ const app = express()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: true,
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    origin: ["http://localhost:5173", "https://yourfrontenddomain.com"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
 
