@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logout from '../utils/Logout';
-import { 
-  LayoutDashboard,
-  LineChart,
-  User,
-  LogOut,
-  Menu,
-  X,
-  Wallet
-} from 'lucide-react';
+import { LayoutDashboard, LineChart, User, LogOut, Menu, X, Wallet } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const userData = localStorage.getItem('client_a_x_i_s_680');
-  const token = localStorage.getItem('token');
-  const user = userData ? JSON.parse(userData) : null;
+  const [token, setToken] = useState('');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // when authChange is dispatch handleAuthChange is upadate
+    const handleAuthChange = () => {
+      const userData = localStorage.getItem('client_a_x_i_s_680');
+      const tokenData = localStorage.getItem('token');
+      setToken(tokenData || '');
+      setUser(userData ? JSON.parse(userData) : null);
+    };
+    handleAuthChange();
+
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
+  }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -23,7 +31,7 @@ const Navbar = () => {
     <nav className="bg-gray-900 text-white fixed top-0 w-full z-20 shadow-md">
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          {/* logo | Name section */}
+          {/* Logo | Name section */}
           <div className="flex items-center space-x-2">
             <Wallet className="text-blue-400" size={28} />
             <Link to="/" className="text-2xl font-bold">
@@ -100,7 +108,7 @@ const Navbar = () => {
   );
 };
 
-// Reusable NavLink component
+// Reusable NavLink component (unchanged)
 const NavLink = ({ to, icon, text }) => (
   <Link to={to} className="flex items-center space-x-2 hover:text-blue-300">
     {icon}
@@ -108,7 +116,7 @@ const NavLink = ({ to, icon, text }) => (
   </Link>
 );
 
-// Reusable MobileNavLink component
+// Reusable MobileNavLink component (unchanged)
 const MobileNavLink = ({ to, icon, text, onClick }) => (
   <Link 
     to={to} 

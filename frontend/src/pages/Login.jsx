@@ -19,10 +19,10 @@
       try {
         setIsLoading(true);
         const res = await axios.post(
-          'http://localhost:3000/api/user/login', 
+          'https://budget-tracker-server-lilac.vercel.app/api/user/login', 
           formData,
           {
-            withCredentials: true, // Crucial for cookies
+            withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
             }
@@ -30,10 +30,11 @@
         );
     
         if (res.status === 200) {
-          toast.success('Login successful!');
+          toast.success('Login successful!', { position: "top-center", autoClose: 5000});
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('client_a_x_i_s_680', JSON.stringify(res.data.user));
           setPassword('');
+          window.dispatchEvent(new Event('authChange'));
           navigate('/dashboard');
         }
       } catch (error) {
@@ -108,7 +109,7 @@
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+              className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 ${isLoading ? "cursor-not-allowed" : ""}`}
             >
               {isLoading ? 'Logging in...' : 'Login'}
             </button>

@@ -7,17 +7,14 @@ const Logout = () => {
 
   const handleLogout = async () => {
     try {
-      // Call the logout API
-      await axios.get("http://localhost:3000/api/user/logout", {
+      await axios.get("https://budget-tracker-server-lilac.vercel.app/api/user/logout", {
         withCredentials: true,
       });
 
-      // Clear local storage
       localStorage.removeItem("token");
       localStorage.removeItem("client_a_x_i_s_680");
-
-      // Redirect to login page
-      navigate("/login");
+      window.dispatchEvent(new Event('authChange'));
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
