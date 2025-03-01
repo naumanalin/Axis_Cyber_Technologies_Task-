@@ -1,26 +1,31 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import useFetch from '../hooks/useFetch';
 
-const TotalAmount = ({}) => {
-    const [type, setType] = useState()
-    const [amount, setAmount] = useState();
+const TotalAmount = ({ type, color }) => {
+    const route = `/api/transactions/total/${type}`;
+    const { data, error, isLoading } = useFetch("GET", route);
 
-    useEffect(()=>{
-        const useFetch = async ()=>{
-            const res = await axios.get('https://budget-tracker-server-lilac.vercel.app/api/transactions/total/income')
-            if(res.status == 200){
-                const data = res.data;
-                setType('income')
-                setAmount(data.income)
-            }
-        }
-    },)
-  return (
-    <div className='sm:w-full md:w-[250px] rounded-md p-2 bg-white border-green-500 border'>
-        Total Income
-        <span> $ {amount}</span>
-    </div>
-  )
-}
+    const amount = data?.income ?? 0; 
 
-export default TotalAmount
+    return (
+        <div
+            className={`sm:w-full md:w-1/4 rounded-md p-4 bg-white border-l-4 border-${color}-500 shadow-sm cursor-pointer`}
+            title={!error ? data?.message : ''}
+        >
+            <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-gray-500">Total {type}</span>
+                
+                {isLoading ? (
+                    <div className="h-6 w-20 bg-gray-100 animate-pulse rounded" />
+                ) : error ? (
+                    <span className="text-red-500 text-sm">Failed to load</span>
+                ) : (
+                    <span className="text-xl font-semibold text-gray-900">
+                        ${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default TotalAmount;
