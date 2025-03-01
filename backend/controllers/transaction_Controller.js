@@ -133,3 +133,67 @@ export const total_expense = async (req, res) => {
     }
 };
 // -------------------------------------------------------------------------------------------------------------------------
+
+// function to get first and last date of current month
+const getCurrentMonthRange = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.toLocaleString('default', { month: 'long' }); 
+    const firstDay = new Date(year, now.getMonth(), 1); 
+    const lastDay = new Date(year, now.getMonth(), now.getDate());
+
+    return { firstDay, lastDay, month, year };
+};
+
+export const total_income_of_current_month = async (req, res) => {
+    try {
+        const user = req.user;
+        const { firstDay, lastDay, month, year } = getCurrentMonthRange();
+
+        const incomeTransactions = await transaction.find({
+            createdBy: user._id,
+            type: 'income',
+            createdAt: { $gte: firstDay, $lte: lastDay }
+        });
+
+        const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+
+        res.status(200).json({ 
+            success: true, 
+            message: `${user.name} has a total income of $${totalIncome} in ${month} from day ${firstDay.getDate()} to ${lastDay.getDate()}.`,
+            income: totalIncome,
+            date: `${firstDay.getDate()} to ${lastDay.getDate()} ${month} - ${year}`
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Internal server error!", error });
+    }
+};
+
+// -------------------------------------------------------------------------------------------------------------------------
+
+export const total_expense_of_current_month = async (req, res) => {
+    try {
+        const user = req.user;
+        const { firstDay, lastDay, month, year } = getCurrentMonthRange();
+
+        const expenseTransactions = await transaction.find({
+            createdBy: user._id,
+            type: 'expense',
+            createdAt: { $gte: firstDay, $lte: lastDay } 
+        });
+
+        const totalExpense = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+
+        res.status(200).json({ 
+            success: true, 
+            message: `${user.name} has a total expense of $${totalExpense} in ${month} from day ${firstDay.getDate()} to ${lastDay.getDate()}.`,
+            expense: totalExpense,
+            date: `${firstDay.getDate()} to ${lastDay.getDate()} ${month} - ${year}`
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Internal server error!", error });
+    }
+};
+
+
+
