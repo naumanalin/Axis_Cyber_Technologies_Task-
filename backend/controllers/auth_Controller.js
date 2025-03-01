@@ -71,7 +71,7 @@ export const login = async (req, res) => {
 
         // Set cookie properly
         res.cookie('a_x_is', token, {
-            httpOnly: true,
+           // httpOnly: true,
             secure: false,
             maxAge: d * 24 * 60 * 60 * 1000, 
             path: '/',
