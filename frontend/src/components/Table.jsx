@@ -3,6 +3,8 @@ import DataTable from 'react-data-table-component';
 import useFetch from '../hooks/useFetch';
 import { Edit, Trash2, Loader2 } from 'lucide-react';
 import AddNew from './AddNew';
+import { toast } from 'react-toastify';
+import Delete from './Delete';
 
 // Add error boundary to catch component errors
 class ErrorBoundary extends React.Component {
@@ -30,6 +32,10 @@ class ErrorBoundary extends React.Component {
 const Table = ({openNew, setOpenNew}) => {
   const { data, error, isLoading } = useFetch("GET", "/api/transactions");
   const [tableData, setTableData] = useState([]);
+
+  const showEditMessage = ()=>{
+     toast.success('Edit Transaction not currently available and it will be add on you demand !')
+  }
   
 
   React.useEffect(() => {
@@ -76,14 +82,15 @@ const Table = ({openNew, setOpenNew}) => {
     },
     {
       name: 'Actions',
-      cell: () => (
+      cell: (row) => (
         <div className="flex gap-2">
-          <button className="text-blue-600 hover:text-blue-800">
+          <button onClick={showEditMessage} className="text-blue-600 hover:text-blue-800">
             <Edit size={18} />
           </button>
-          <button className="text-red-600 hover:text-red-800">
-            <Trash2 size={18} />
-          </button>
+          <Delete id={row._id} onDelete={() => {
+            // Remove the deleted row from the table
+            setTableData(tableData.filter(item => item._id !== row._id));
+          }} />
         </div>
       ),
       allowOverflow: true,

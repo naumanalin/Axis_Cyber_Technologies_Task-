@@ -61,7 +61,7 @@ export const delete_transcation = async (req, res) => {
 
         await transaction.findByIdAndDelete(id);
 
-        res.status(200).json({ success: true, message: '✔ Transaction deleted successfully.' });
+        res.status(200).json({ success: true, message: '✔ Mission failed successfully 🤔' });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error!" });
     }
@@ -153,11 +153,11 @@ export const total_income_of_current_month = async (req, res) => {
         const incomeTransactions = await transaction.find({
             createdBy: user._id,
             type: 'income',
-            createdDate: { $gte: firstDay, $lte: lastDay }
+            date: { $gte: firstDay, $lte: lastDay }
         });
 
         const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-
+        
         res.status(200).json({ 
             success: true, 
             message: `${user.name} has a total income of $${totalIncome} in ${month} from day ${firstDay.getDate()} to ${lastDay.getDate()}.`,
@@ -180,7 +180,7 @@ export const total_expense_of_current_month = async (req, res) => {
         const expenseTransactions = await transaction.find({
             createdBy: user._id,
             type: 'expense',
-            createdDate: { $gte: firstDay, $lte: lastDay } 
+            date: { $gte: firstDay, $lte: lastDay } 
         });
 
         const totalExpense = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
