@@ -16,3 +16,4 @@ export default defineConfig({
   },
   base: '/', // Ensures correct asset paths on Vercel
 });
+
