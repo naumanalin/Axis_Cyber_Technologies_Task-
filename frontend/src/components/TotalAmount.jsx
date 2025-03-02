@@ -1,17 +1,21 @@
 import useFetch from "../hooks/useFetch";
+import { motion } from "framer-motion";
 
-const TotalAmount = ({ type, color, of }) => {
+const TotalAmount = ({ type, color, of, dependency }) => {
     const route = of ? `/api/transactions/total/${type}/${of}` : `/api/transactions/total/${type}`;
-    const { data, error, isLoading } = useFetch("GET", route);
+    const { data, error, isLoading } = useFetch("GET", route, dependency={dependency});
 
     const amount = data?.[type] ?? 0;
     const month = data?.month ?? "";
     const dateRange = data?.date ?? "";
 
     return (
-        <div
-            className={`p-5 rounded-lg bg-white border border-${color}-500 shadow-lg transition duration-300 hover:shadow-xl`}
-            title={!error ? data?.message : ""}
+        <motion.div
+        whileHover={{ scale:1.1}}
+        transition={{ duration: 0.3 }}
+        style={{borderColor:`${color}`}}
+        className={`p-5 rounded-lg bg-white border shadow-lg transition duration-300 hover:shadow-xl`}
+        title={!error ? data?.message : ""}
         >
             <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold text-gray-600 capitalize">
@@ -31,7 +35,7 @@ const TotalAmount = ({ type, color, of }) => {
                     </>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

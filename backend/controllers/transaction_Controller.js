@@ -153,7 +153,7 @@ export const total_income_of_current_month = async (req, res) => {
         const incomeTransactions = await transaction.find({
             createdBy: user._id,
             type: 'income',
-            createdAt: { $gte: firstDay, $lte: lastDay }
+            createdDate: { $gte: firstDay, $lte: lastDay }
         });
 
         const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
@@ -180,7 +180,7 @@ export const total_expense_of_current_month = async (req, res) => {
         const expenseTransactions = await transaction.find({
             createdBy: user._id,
             type: 'expense',
-            createdAt: { $gte: firstDay, $lte: lastDay } 
+            createdDate: { $gte: firstDay, $lte: lastDay } 
         });
 
         const totalExpense = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);

@@ -1,67 +1,149 @@
-import React, { useEffect, useRef } from 'react';
-import $ from "jquery";
-import "datatables.net-dt";
-import "datatables.net-responsive-dt";
-import "datatables.net-dt/css/dataTables.dataTables.min.css";
+import React, { useState } from 'react';
+import DataTable from 'react-data-table-component';
 import useFetch from '../hooks/useFetch';
 import { Edit, Trash2, Loader2 } from 'lucide-react';
+import AddNew from './AddNew';
 
-const Table = () => {
-    const { data, error, isLoading } = useFetch("GET", "/api/transactions");
-    const tableRef = useRef(null);
+// Add error boundary to catch component errors
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-    useEffect(() => {
-        if (!data || data.length === 0) return; // Ensure data is loaded before initializing DataTable
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
 
-        const dataTable = $(tableRef.current).DataTable({
-            responsive: true,
-            destroy: true, // Prevent duplicate initialization
-            paging: true,
-            searching: true,
-            ordering: true
-        });
-
-        return () => {
-            dataTable.destroy(); // Cleanup on unmount
-        };
-    }, [data]);
-
-    return (
-        <div className='w-full bg-white rounded-lg shadow-sm p-4'>
-            <h1 className="text-xl font-semibold text-gray-800 mb-4">Transaction History</h1>
-            <div className="rounded-lg overflow-x-auto">
-                <table className="w-full" ref={tableRef}>
-                    <thead className="bg-gray-50">
-                        <tr className="text-left text-sm font-medium">
-                            <th className="px-4 py-3">#</th>
-                            <th className="px-4 py-3">Title</th>
-                            <th className="px-4 py-3">Category</th>
-                            <th className="px-4 py-3">Type</th>
-                            <th className="px-4 py-3">Date</th>
-                            <th className="px-4 py-3">Amount</th>
-                            <th className="px-4 py-3">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data && data.map((item, index) => (
-                            <tr key={index} className='hover:bg-gray-100'>
-                                <td className="px-2 py-1">{index + 1}</td>
-                                <td className="px-2 py-1">{item.title}</td>
-                                <td className="px-2 py-1">{item.category}</td>
-                                <td className="px-2 py-1">{item.type}</td>
-                                <td className="px-2 py-1">{item.date}</td>
-                                <td className="px-2 py-1">{item.amount}</td>
-                                <td className="px-2 py-1">
-                                    <button className="text-blue-600"><Edit size={18} /></button>
-                                    <button className="text-red-600 ml-2"><Trash2 size={18} /></button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-red-500 bg-red-50 rounded-lg">
+          Error displaying table. Please try refreshing the page.
         </div>
-    );
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const Table = ({openNew, setOpenNew}) => {
+  const { data, error, isLoading } = useFetch("GET", "/api/transactions");
+  const [tableData, setTableData] = useState([]);
+  
+
+  React.useEffect(() => {
+    if (data && data.success && Array.isArray(data.transactions)) {
+      setTableData(data.transactions);
+    } else {
+      setTableData([]); // Ensure it's always an array
+    }
+  }, [data, openNew]);
+
+  const columns = [
+    {
+      name: '#',
+      cell: (row, index) => index + 1,
+      width: '70px'
+    },
+    {
+      name: 'Title',
+      selector: row => row.title || 'Untitled',
+      sortable: true,
+    },
+    {
+      name: 'Category',
+      selector: row => row.category || '-',
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      cell: row => (
+        <span className={`capitalize ${row.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+          {row.type || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      name: 'Date',
+      selector: row => row.date ? new Date(row.date).toLocaleDateString() : '-',
+      sortable: true,
+    },
+    {
+      name: 'Amount',
+      cell: row => `$${(row.amount || 0).toLocaleString()}`,
+      sortable: true,
+    },
+    {
+      name: 'Actions',
+      cell: () => (
+        <div className="flex gap-2">
+          <button className="text-blue-600 hover:text-blue-800">
+            <Edit size={18} />
+          </button>
+          <button className="text-red-600 hover:text-red-800">
+            <Trash2 size={18} />
+          </button>
+        </div>
+      ),
+      allowOverflow: true,
+      ignoreRowClick: true,
+    },
+  ];
+
+  return (
+    <>
+    <AddNew open={openNew} setOpen={setOpenNew} />
+    <ErrorBoundary>
+      <div className="w-full bg-white rounded-lg shadow-sm p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-semibold text-gray-800">Transaction History {openNew ? "true" : "false"}</h1>
+          <button onClick={()=>setOpenNew(!openNew)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+            + Add New
+          </button>
+        </div>
+
+        {error ? (
+          <div className="text-red-500 p-4 bg-red-50 rounded-lg">
+            Error loading data: {error.message}
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={tableData}
+            progressPending={isLoading}
+            progressComponent={
+              <div className="py-4 flex items-center justify-center">
+                <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+              </div>
+            }
+            noDataComponent={
+              <div className="py-4 text-center text-gray-500">
+                No transactions found
+              </div>
+            }
+            pagination
+            responsive
+            customStyles={{
+              headCells: {
+                style: {
+                  backgroundColor: '#f9fafb',
+                },
+              },
+              cells: {
+                style: {
+                  paddingTop: '0.5rem',
+                  paddingBottom: '0.5rem',
+                },
+              },
+            }}
+          />
+        )}
+      </div>
+    </ErrorBoundary>
+    </>
+  );
 };
 
 export default Table;
