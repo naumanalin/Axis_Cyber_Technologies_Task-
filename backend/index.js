@@ -21,7 +21,7 @@ const app = express()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173", "https://yourfrontenddomain.com"],
+    origin: ["http://localhost:5173", "https://budget-tracker-three-beta.vercel.app/", "http://localhost:5174"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
