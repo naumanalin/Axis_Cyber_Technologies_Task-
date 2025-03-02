@@ -78,20 +78,60 @@ const AddNew = ({ open, setOpen }) => {
           </div>
 
           <div className='mb-2'>
-            <label htmlFor='category' className='block text-gray-700'>Select Category</label>
-            <select id='category' value={category} onChange={(e) => setCategory(e.target.value)} className='w-full px-4 py-2 border rounded-lg outline-none' required>
-              <option value=''>Select a category</option>
-              <optgroup label='Expenses'>
-                <option value='Food & Dining'>Food & Dining</option>
-                <option value='Rent/Mortgage'>Rent/Mortgage</option>
-                <option value='Transportation'>Transportation</option>
-              </optgroup>
-              <optgroup label='Income'>
-                <option value='Salary/Wages'>Salary/Wages</option>
-                <option value='Freelance Income'>Freelance Income</option>
-              </optgroup>
-            </select>
-          </div>
+  <label htmlFor='category' className='block text-gray-700'>Select Category</label>
+  <select 
+    id='category' 
+    value={category} 
+    onChange={(e) => setCategory(e.target.value)} 
+    className='w-full px-4 py-2 border rounded-lg outline-none' 
+    required
+  >
+    <option value=''>Select a category</option>
+
+    <optgroup label='Expenses'>
+      <option value='Food & Dining'>Food & Dining</option>
+      <option value='Rent/Mortgage'>Rent/Mortgage</option>
+      <option value='Transportation'>Transportation</option>
+      <option value='Utilities (Electricity, Water, Gas)'>Utilities (Electricity, Water, Gas)</option>
+      <option value='Insurance'>Insurance</option>
+      <option value='Healthcare'>Healthcare</option>
+      <option value='Entertainment'>Entertainment</option>
+      <option value='Shopping'>Shopping</option>
+      <option value='Education'>Education</option>
+      <option value='Debt Payments'>Debt Payments</option>
+      <option value='Subscriptions & Memberships'>Subscriptions & Memberships</option>
+      <option value='Gifts & Donations'>Gifts & Donations</option>
+      <option value='Household Supplies'>Household Supplies</option>
+      <option value='Personal Care'>Personal Care</option>
+      <option value='Childcare'>Childcare</option>
+      <option value='Pets'>Pets</option>
+      <option value='Investments (Losses)'>Investments (Losses)</option>
+      <option value='Taxes'>Taxes</option>
+      <option value='Travel'>Travel</option>
+      <option value='Other Expenses'>Other Expenses</option>
+    </optgroup>
+
+    <optgroup label='Income'>
+      <option value='Salary/Wages'>Salary/Wages</option>
+      <option value='Freelance Income'>Freelance Income</option>
+      <option value='Business Income'>Business Income</option>
+      <option value='Investments (Profits)'>Investments (Profits)</option>
+      <option value='Rental Income'>Rental Income</option>
+      <option value='Interest Income'>Interest Income</option>
+      <option value='Dividends'>Dividends</option>
+      <option value='Capital Gains'>Capital Gains</option>
+      <option value='Gifts Received'>Gifts Received</option>
+      <option value='Government Assistance'>Government Assistance</option>
+      <option value='Bonuses'>Bonuses</option>
+      <option value='Side Hustle'>Side Hustle</option>
+      <option value='Refunds/Reimbursements'>Refunds/Reimbursements</option>
+      <option value='Royalties'>Royalties</option>
+      <option value='Other Income'>Other Income</option>
+    </optgroup>
+
+    <option value='other'>Other</option>
+  </select>
+</div>
 
           <div className='mb-2'>
             <label htmlFor='amount' className='block text-gray-700'>Amount</label>
